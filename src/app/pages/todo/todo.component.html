@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>To-Do List</h2>
+    <button class="btn btn-danger" (click)="logout()">Logout</button>
+  </div>
+
+  <form [formGroup]="taskForm" (ngSubmit)="addTask()" class="mb-3">
+    <input type="text" class="form-control mb-2" placeholder="Task Title" formControlName="title">
+    <div *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.invalid" class="text-danger">
+      Task title is required
+    </div>
+    <input type="text" class="form-control mb-2" placeholder="Description" formControlName="description">
+    <input type="date" class="form-control mb-2" formControlName="dueDate">
+    <button class="btn btn-primary" type="submit">Add Task</button>
+  </form>
+
+  <div class="d-flex mb-3 gap-2">
+    <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchText" name="search">
+    <select class="form-select w-auto" [(ngModel)]="filter" (change)="applyFilter(filter)" name="filter">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+    </select>
+  </div>
+
+  <div *ngIf="filteredTasks.length; else noTasks">
+    <div *ngFor="let task of filteredTasks" class="card mb-2">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+          <input type="checkbox" [checked]="task.completed" (change)="toggleComplete(task)" class="form-check-input me-2">
+          <span [ngClass]="{'text-decoration-line-through': task.completed}">{{task.title}}</span>
+          <small *ngIf="task.description">- {{ task.description }}</small>
+          <small *ngIf="task.dueDate" class="text-muted">({{ task.dueDate }})</small>
+        </div>
+        <button class="btn btn-sm btn-danger" (click)="deleteTask(task.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+  <ng-template #noTasks>
+    <p class="text-center text-muted">No tasks found.</p>
+  </ng-template>
+</div>
